@@ -1,0 +1,114 @@
+import random
+def exibeMenu():
+    print("------- Campo Minado -------")
+    print("0 - para sair do programa.")
+    print("1 - para iniciar/continuar o programa.")
+    opcao = int(input("Digite a opção: "))
+    return opcao
+
+campo = []
+def CampoInicial():
+# Matriz
+    for i in range(1,11):
+        linha = []
+        for j in range(1,11):
+            linha.append("x")
+        campo.append(linha)
+    print("Campo Minado Criado!!")
+# Imprimir
+def imprimir():
+    for i in range(10):
+        for j in range(10):
+            print(campo[i][j],end=" ")
+        print()
+# Número de Minas Próximas
+def MinasProximas(x,y):
+    proximidade = 0 
+    cont = 0
+    for i in range(-1, 2): 
+        for j in range(-1, 2): 
+            nx = x + i
+            ny = y + j 
+            if 0 <= nx < 10 and 0 <= ny < 10: 
+                if [nx, ny] != [x, y] and [nx, ny] in minas: 
+                    cont = cont + 1
+                    proximidade =  cont
+    return proximidade
+
+# Minas 
+minas=[]
+i = 0
+while i <10:
+    x_mina = random.randint(0,9)
+    y_mina = random.randint(0,9)
+    if not([x_mina,y_mina] in minas):
+        minas.append([x_mina,y_mina])
+        i = i + 1
+print(minas)
+
+CampoInicial()
+imprimir()
+opcao = exibeMenu()
+jogada = 0
+cont = 10
+bandeiras = []
+while opcao != 0:
+    if opcao == 1:
+        marca = input("Deseja marcar um local?: ")
+        if marca == "sim" or marca == "Sim" or  marca == "S" or  marca == "s" or marca == "Yes" or marca == "yes" or marca == "Y" or marca == "y":
+            lin = int(input("Digite a linha que você quer: "))
+            col = int(input("Digite a coluna que você quer: "))
+            campo[lin][col]= "|"
+            bandeiras.append([lin,col])
+            cont = cont - 1
+            imprimir()
+            print("cont=",cont,bandeiras)
+            if cont == 0 and bandeiras.sort() == minas.sort():
+                print("Parabéns, venceu!")    
+                break
+        elif marca == "não" or marca == "nao" or  marca == "Não" or  marca == "Nao" or marca == "No" or marca == "no" or marca == "N" or marca == "n":
+            lin = int(input("Digite a linha que você quer: "))
+            col = int(input("Digite a coluna que você quer: "))
+            jogada = jogada + 1
+            if [lin,col] in minas:
+                for i in range(10):
+                    for j in range(10):
+                        if [i,j] in minas:
+                            campo[i][j] = "M"
+                            imprimir()
+                            print("Game over!")
+                break          
+            elif jogada == 90:
+                print("Parabéns, venceu!")    
+                break
+            else:
+                numMinas = MinasProximas(lin, col)
+                if numMinas > 0: 
+                    campo[lin][col] = numMinas 
+                    imprimir()
+                else: 
+                    campo[lin][col]= " "
+                    imprimir()       
+        else:
+            print("Digite uma opção válida!")  
+
+        if cont < 10:
+            desmarca =  input("Deseja desmarcar um local?: ")   
+            if desmarca == "sim" or desmarca == "Sim" or  desmarca == "S" or desmarca == "s" or desmarca == "Yes" or desmarca == "yes" or desmarca == "Y" or desmarca == "y":
+                lin = int(input("Digite a linha que você quer: "))
+                col = int(input("Digite a coluna que você quer: "))
+                bandeiras.remove([lin,col])
+                campo[lin][col]= "x"
+                cont = cont + 1
+                imprimir()
+            elif desmarca == "não" or desmarca == "nao" or  desmarca == "Não" or  desmarca == "Nao" or desmarca == "No" or desmarca == "no" or desmarca == "N" or desmarca == "n":
+                imprimir()
+            else: 
+               print("Opção inválida!") 
+
+        print("")
+    elif opcao == 0:
+        break   
+    else: 
+        print("Opção inválida!") 
+        opcao = exibeMenu()
